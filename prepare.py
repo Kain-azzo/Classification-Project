@@ -3,27 +3,21 @@ import numpy as np
 
 from sklearn.model_selection import train_test_split
 
-def prep_iris(flower):
-    flower = flower.rename(columns={"species_name":"species"})
-    flower = flower.drop(columns=['species_id','measurement_id'])
-    return flower
-
-def clean_titanic(boat):
-
-    boat = boat.drop(columns=['embarked', 'age','deck', 'class'])
-    boat.pclass = boat.pclass.astype(object)
-    boat.embark_town = boat.embark_town.fillna('Southampton')
-    
-    return boat
-
-
 
 def prep_telco(isp):
+    '''Takes the data frame and gets rid of unnecessary data converts isp charges data into a usable format for modeling''' 
     isp = isp.drop(columns = ['payment_type_id','internet_service_type_id','contract_type_id'])
-    isp.total_charges = isp.total_charges.str.replace(' ', '0.0')
+    isp.total_charges = isp.total_charges.str.replace(' ', '0.0').astype(float)
+    isp.dependents = isp.dependents.map({"No":0,"Yes":1}).astype(int)
+    isp.partner = isp.partner.map({"No":0,"Yes":1}).astype(int)
+    isp.phone_service = isp.phone_service.map({"No":0,"Yes":1}).astype(int)
+    isp.paperless_billing = isp.paperless_billing.map({"No":0,"Yes":1}).astype(int)
+    internet_service_type = internet_service_type.fillna("No internet service")
+    
     return isp
 
 def chop_data(frame, col):
+    '''Takes the data frame and breaks it into train, test, and split information, with two splits'''
 
     train, validate_test = train_test_split(frame,
                      train_size=0.6,
@@ -39,17 +33,3 @@ def chop_data(frame, col):
                                      )
     return train, validate, test
 
-def preprocess_titanic(train, validate, test):
-    appendo = []
-  
-    for stuff in [train, validate, test]:
-        stuff['gender'] = stuff['sex'].map({'male': 0, 'female': 1})
-        stuff.drop(columns='sex', inplace=True)
-        stuff.drop(columns='passenger_id', inplace=True)
-        stuff["pclass"] = stuff["pclass"].astype(int)
-        stuff['embark_town'].fillna('missing', inplace=True)
-        new_embark_town = pd.get_dummies(stuff['embark_town'], drop_first=True).astype(int)
-        appendo.append(pd.concat([stuff,new_embark_town],axis=1).drop(columns='embark_town'))
-        
-
-    return appendo
