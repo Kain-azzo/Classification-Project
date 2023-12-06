@@ -1,5 +1,7 @@
 import prepare
 import matplotlib.pyplot as plt
+from scipy.stats import mannwhitneyu
+
 
 def security_impact(isp):
 
@@ -44,13 +46,13 @@ def gender_impact(isp):
     plt.show()
     
 def senior_citizen_churn(isp):
-    senior_citizen_data = isp[isp['senior_citizen'] == 1]
+    senior_citizen_data = isp[isp['senior_citizen']==1]
 
     # Calculate the churn rate for senior citizens
     senior_citizen_churn_rate = senior_citizen_data['churn'].mean()
 
     # Calculate the churn rate for non-senior citizens
-    non_senior_citizen_data = isp[isp['senior_citizen'] == 0]
+    non_senior_citizen_data = isp[isp['senior_citizen']==0]
     non_senior_citizen_churn_rate = non_senior_citizen_data['churn'].mean()
 
     # Create a pie chart
@@ -65,7 +67,7 @@ def senior_citizen_churn(isp):
     
     
     
-def churners(isp):    
+def churners(isp):   
     did_churn = isp[isp.churn == 1]
     didnt_churn= isp[isp.churn == 0]
 
@@ -86,3 +88,43 @@ def churners(isp):
 
     # Display the plot
     plt.show()
+    
+
+def churner_mannwit(isp):
+    charges_churned = isp.loc[isp['churn'] == 1, 'monthly_charges']
+    charges_non_churned = isp.loc[isp['churn'] == 0, 'monthly_charges']
+
+    # Perform Mann-Whitney U test
+    result = mannwhitneyu(charges_churned, charges_non_churned)
+
+    # Display the result
+    print(f'Mann-Whitney U Statistic: {result.statistic}')
+    print(f'P-value: {result.pvalue}')
+
+    # Interpret the result
+    alpha = 0.05
+    if result.pvalue < alpha:
+        print("Reject the null hypothesis. There is a significant difference in monthly charges between churned and non-churned         customers.")
+    else:
+        print("Fail to reject the null hypothesis. There is no significant difference in monthly charges between churned and           non-churned customers.")
+        
+def senior_mannwit(isp):
+    charges_senior_churned = isp.loc[(isp['churn'] == 1) & (isp['senior_citizen'] == 0),'monthly_charges']
+    charges_senior_non_churned = isp.loc[(isp['churn'] == 0) & (isp['senior_citizen'] == 0),'monthly_charges']
+
+    # Check if samples are non-empty before performing Mann-Whitney U test
+    if len(charges_senior_churned) > 0 and len(charges_senior_non_churned) > 0:
+        # Perform Mann-Whitney U test
+        result_senior = mannwhitneyu(charges_senior_churned, charges_senior_non_churned)
+
+        # Display the result
+        print(f'Mann-Whitney U Statistic (Senior Citizens): {result_senior.statistic}')
+        print(f'P-value: {result_senior.pvalue}')
+
+        # Interpret the result
+        alpha = 0.05
+        if result_senior.pvalue < alpha:
+            print("Reject the null hypothesis. There is a significant difference in monthly charges between churned and  non-               churned senior citizens.")
+        else:
+            print("Fail to reject the null hypothesis. There is no significant difference in monthly charges between churned               and non-churned senior citizens.")
+
