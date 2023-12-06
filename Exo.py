@@ -4,7 +4,7 @@ from scipy.stats import mannwhitneyu
 
 
 def security_impact(isp):
-
+    '''Determines if gender has any impact on security bundle purchase, accepts gender and security backup as inputs, accepts       dataframe'''
     Male = isp[isp.gender == 0]
     Female = isp[isp.gender == 1]
 
@@ -24,7 +24,8 @@ def security_impact(isp):
 
     plt.show()
 
-def gender_impact(isp):    
+def gender_impact(isp):
+    '''Determines if gender has any impact on churn rates, accepts gender and churn as inputs, accepts dataframe'''
     Male = isp[isp.gender == 0]
     Female = isp[isp.gender == 1]
     fig, axs = plt.subplots(1, 2, figsize=(12, 5))
@@ -46,6 +47,7 @@ def gender_impact(isp):
     plt.show()
     
 def senior_citizen_churn(isp):
+    '''Determines if senior citizens churn faster than non seniors, senior citizens and churn as inputs, accepts dataframe'''
     senior_citizen_data = isp[isp['senior_citizen']==1]
 
     # Calculate the churn rate for senior citizens
@@ -67,7 +69,9 @@ def senior_citizen_churn(isp):
     
     
     
-def churners(isp):   
+def churners(isp):
+    '''Determines if customers churn faster as monthly rates increase, monthly charges and churn as inputs, accepts   
+    dataframe'''
     did_churn = isp[isp.churn == 1]
     didnt_churn= isp[isp.churn == 0]
 
@@ -91,6 +95,7 @@ def churners(isp):
     
 
 def churner_mannwit(isp):
+    '''Prints out results of mannwhitney test with senior citizens and churn as inputs, accepts dataframe'''
     charges_churned = isp.loc[isp['churn'] == 1, 'monthly_charges']
     charges_non_churned = isp.loc[isp['churn'] == 0, 'monthly_charges']
 
@@ -109,6 +114,7 @@ def churner_mannwit(isp):
         print("Fail to reject the null hypothesis. There is no significant difference in monthly charges between churned and           non-churned customers.")
         
 def senior_mannwit(isp):
+    '''Prints out results of mannwhitney test with churn and monthiy charges as inputs, accepts dataframe'''
     charges_senior_churned = isp.loc[(isp['churn'] == 1) & (isp['senior_citizen'] == 0),'monthly_charges']
     charges_senior_non_churned = isp.loc[(isp['churn'] == 0) & (isp['senior_citizen'] == 0),'monthly_charges']
 
